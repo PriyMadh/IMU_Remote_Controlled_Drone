@@ -14,7 +14,7 @@ int state1 = 0;
 int state2 = 0;
 
 
-// Low pass flter vars
+// Low pass filter vars
 float filtered_ax = 0.0;
 float filtered_ay = 0.0;
 float filtered_az = 0.0;
@@ -57,16 +57,10 @@ void setup() {
 }
 
 void loop() {
-  
- 
   //unsigned long current_time = micros(); //the code will come back here to the top and the whole script under here will take form last time to new current time
   //float dt = (current_time - last_time)/1000000.0; // convert to sec
   //last_time = current_time; // reset last_time
 
-  
-
-
-  
   imu::Vector<3>linear_acc = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL); //this integrates the accelerometer wiht the gyroscope and subtracts 9.8 m/s^2 for gravity
 
   float ax = linear_acc.x(); 
@@ -84,7 +78,7 @@ void loop() {
   filtered_az = alpha*az + (1-alpha)*filtered_az;
 
 
-//these won't be used to train model, but overirde gestures - the fist is to mkae the drone hover and the second is to make the droen take off and land again
+//these won't be used to train model, but overide gestures - the fist is to make the drone hover and the second is to make the drone take off and land again
   if (digitalRead(button_steady) == 0){ //0 b/c used INPUT_PULLUP
     state1 = 1 - state1;
     delay(200);
@@ -93,9 +87,6 @@ void loop() {
     state2 = 1 - state2;
     delay(200); // debouncing
   }
-
-  
-
 
   Serial.print(filtered_ax); Serial.print(", ");
   Serial.print(filtered_ay); Serial.print(", ");
