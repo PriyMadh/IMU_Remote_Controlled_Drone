@@ -3,10 +3,6 @@
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
 #include <math.h>
-#include "MyInsKalman.h" // My Kalman experimental
-
-MyInsKalman kalmanRoll;
-MyInsKalman kalmanPitch;
 
 Adafruit_BNO055 myIMU = Adafruit_BNO055(55, 0x28);
 
@@ -15,7 +11,6 @@ Adafruit_BNO055 myIMU = Adafruit_BNO055(55, 0x28);
 float thetaM, phiM;            // Raw Accelerometer Pitch & Roll
 float thetaLPF = 0, phiLPF = 0;// Low-Pass Filtered values
 float thetaComp = 0, phiComp = 0; // Complementary Filter values
-float thetaKalman = 0, phiKalman = 0; // Kalman Filter values
 
 unsigned long timer = 0;
 int lockoutTimer = 0;
@@ -52,9 +47,6 @@ void setup() {
   thetaM = -atan2(acc.x(), acc.z()) * radToDeg;
   phiM   =  atan2(acc.y(), acc.z()) * radToDeg;
 
-  kalmanPitch.setAngle(thetaM);
-  kalmanRoll.setAngle(phiM);
-
   timer = micros();
 }
 
@@ -81,10 +73,6 @@ void loop() {
   float gyroBias = 0;
   thetaComp = 0.95 * (thetaComp + (gyr.y()+gyroBias) * dt) + 0.05 * thetaM;
   phiComp   = 0.95 * (phiComp   + (gyr.x()+gyroBias) * dt) + 0.05 * phiM;
-
-  // --- FILTER 3: My experimental 2 state kalman filter for roll and pitch
-  float phiKalman  = kalmanRoll.predictAndUpdate(phiM, gyr.x()+gyroBias, dt);
-  float thetaKalman = kalmanPitch.predictAndUpdate(thetaM, gyr.y()+gyroBias, dt);
 
   // --- FILTER 4: BNO055 Onboard Hardware Fusion ---
   /*imu::Vector<3> bnoEuler = myIMU.getVector(Adafruit_BNO055::VECTOR_EULER);
@@ -149,13 +137,11 @@ void loop() {
   Serial.print(timer); Serial.print(",");
   /*Serial.print(thetaM);      Serial.print(",");
   Serial.print(thetaLPF);    Serial.print(",");
-  Serial.print(thetaComp);   Serial.print(",");
-  Serial.print(thetaKalman); Serial.print(",");*/
+  Serial.print(thetaComp);   Serial.print(",");*/
   //Serial.print(bnoPitch); Serial.print(",");
   Serial.print(phiM);        Serial.print(",");
   Serial.print(phiLPF);    Serial.print(",");
   Serial.print(phiComp);   Serial.print(",");
-  Serial.print(phiKalman); Serial.print(",");
   //Serial.println(bnoRoll); Serial.println(",");
 
   // Serial output for debugging/plotting linear motion
@@ -168,13 +154,11 @@ void loop() {
   /*Serial.print("RawAccelPitch:");     Serial.print(thetaM);      Serial.print(",");
   Serial.print("LPFPitch:");          Serial.print(thetaLPF);    Serial.print(",");
   Serial.print("ComplementaryPitch:");Serial.print(thetaComp);   Serial.print(",");
-  Serial.print("KalmanPitch:");       Serial.print(thetaKalman); Serial.print(",");
   Serial.print("BNO055_FusedPitch:"); Serial.print(bnoPitch); Serial.println(",");
 
   Serial.print("RawAccelRoll:");     Serial.print(phiM);        Serial.print(",");
   Serial.print("LPFRoll:");          Serial.print(phiLPF);    Serial.print(",");
   Serial.print("ComplementaryRoll:");Serial.print(phiComp);   Serial.print(",");
-  Serial.print("KalmanRoll:");       Serial.print(phiKalman); Serial.print(",");
   Serial.print("BNO055_FusedRoll:"); Serial.println(bnoRoll);*/
 
   delay(10); //for like 100 rounds per sec
