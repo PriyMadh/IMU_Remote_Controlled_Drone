@@ -42,8 +42,6 @@ What I found:
 
 ![Lockout after each motion](images/ins_10_gesture_lockout.png)
 
-  Here is a video of it working: https://youtube.com/shorts/QBpUvBzy3HY
-
 Challenges:
 
   The first problem was the lag from the low pass filter. If I made it smoother, it got even later, and if I made it faster, the noise came back. The complementary filter fixed that. The second problem was that tilting the IMU looked like moving it sideways, because gravity gets split onto different axes when it is tilted. So I needed a good tilt estimate to subtract gravity, and the complementary filter's tilt worked better than the low pass filter's. The third problem was that after I detected a motion, the slow down at the end looked like a motion in the opposite direction, so the drone would have gone the wrong way. Adding the 250 millisecond lockout fixed that. The last problem is the gyroscope's bias. The complementary filter can end up off by a few degrees if the gyroscope has an offset, and in my sketch I set the bias to 0, so I tried the Kalman filter to see if it could estimate it. But the Kalman filter is a challenge by itself: I am still learning how it works, and I don't fully understand how to pick its process noise and measurement noise variances yet.
