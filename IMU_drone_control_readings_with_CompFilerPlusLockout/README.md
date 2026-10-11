@@ -1,6 +1,6 @@
 What was this project:
 
-  Basically, in this part of the drone project, I wanted a better way to tell how my hand (with the IMU in it) is tilted, and a better way to detect when it moves left, right, forward, backward, up, or down. In my first version (IMU_drone_control_readings_with_low_pass_filter) I only used a low pass filter on the acceleration. It worked, but I wanted to see if I could get a cleaner signal with less lag, and one that doesn't get fooled when I just tilt the IMU. So I tried a complementary filter, which mixes the gyroscope and the accelerometer, and I also added a short "lockout" after each detected motion so one hand movement doesn't count as two. I also tried a Kalman filter to compare against, but the Kalman filter part is still very experimental. I still need to understand it better, and I need to do more tests so I can tune its noise settings.
+  Basically, in this part of the drone project, I wanted a better way to tell how my hand (with the IMU in it) is tilted, and a better way to detect when it moves left, right, forward, backward, up, or down. In my first version (IMU_drone_control_readings_with_low_pass_filter) I only used a low pass filter on the acceleration. It worked, but I wanted to see if I could get a cleaner signal with less lag, and one that doesn't get fooled when I just tilt the IMU. So I tried a complementary filter, which fuses the gyroscope and the accelerometer measurements to detect tilt, and I also added a short "lockout" after each detected motion so that deceleration at the end of gesture does not falsely trigger as opposite motion.
 
 How did I build this Project:
 
@@ -26,7 +26,7 @@ What I found:
 
 ![Shaking side to side](images/ins_05_linear_accel_xy.png)
 
-  For the Kalman filter test, I let the gyroscope have an offset (a bias). The complementary filter's angle then sat about 7 degrees too high (the light blue line), because it trusts the gyroscope over short times. My Kalman filter figured out the offset and stayed close to the right answer (the black line). These Kalman results are only from a few early tests with untuned settings, so I can't say yet how well it really works. I need to run more tests before I trust it.
+  For the Kalman filter test, I let the gyroscope have an offset (a bias). The complementary filter's angle then sat about 7 degrees too high (the light blue line), because it trusts the gyroscope over short times. My Kalman filter figured out the offset and stayed close to the right answer (the black line). These Kalman results are only from a few early tests with untuned settings, so I can't say yet how well it really works. I need to run more tests before I use it.
 
 ![Kalman filter with a gyro bias, sitting still](images/ins_06_kalman_gyro_bias_stationary.png)
 
@@ -42,11 +42,9 @@ What I found:
 
 ![Lockout after each motion](images/ins_10_gesture_lockout.png)
 
-  Here is a video of it working: https://youtube.com/shorts/QBpUvBzy3HY
-
 Challenges:
 
-  The first problem was the lag from the low pass filter. If I made it smoother, it got even later, and if I made it faster, the noise came back. The complementary filter fixed that. The second problem was that tilting the IMU looked like moving it sideways, because gravity gets split onto different axes when it is tilted. So I needed a good tilt estimate to subtract gravity, and the complementary filter's tilt worked better than the low pass filter's. The third problem was that after I detected a motion, the slow down at the end looked like a motion in the opposite direction, so the drone would have gone the wrong way. Adding the 250 millisecond lockout fixed that. The last problem is the gyroscope's bias. The complementary filter can end up off by a few degrees if the gyroscope has an offset, and in my sketch I set the bias to 0, so I tried the Kalman filter to see if it could estimate it. But the Kalman filter is a challenge by itself: I am still learning how it works, and I don't fully understand how to pick its process noise and measurement noise variances yet.
+  The first problem was the lag from the low pass filter. If I made it smoother, the lag increased, and if I made it faster, the noise came back. The complementary filter fixed that. The second problem was that tilting the IMU looked like moving it sideways, because gravity gets split onto different axes when it is tilted. So I needed a good tilt estimate to subtract gravity, and the complementary filter's tilt worked better than the low pass filter's. The third problem was that after I detected a motion, the slow down at the end looked like a motion in the opposite direction, so the drone would have gone the wrong way. Adding the 250 millisecond lockout fixed that. The last problem is the gyroscope's bias. The complementary filter can end up off by a few degrees if the gyroscope has an offset, and in my sketch I set the gyro bias to a non-zero value which the Kalman filter estimates and compensates for. But the Kalman filter is a challenge by itself: I am still learning how it works, and I don't fully understand how to pick its process noise and measurement noise variances yet. For this application, the complementary filter performs well, and is easy to implement and understand. 
 
 What I am going to Improve:
 
