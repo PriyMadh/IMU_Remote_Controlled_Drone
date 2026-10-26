@@ -48,7 +48,7 @@ void loop() {
   vz += az*dt;
 
 
-//these won't be used to train model, but overirde gestures - the fist is to mkae the drone hover and the second is to make the droen take off and land again
+//these won't be used to train model, but overirde gestures - the fist is to make the drone hover and the second is to make the droen take off and land again
   if digitalRead(button_steady == 0){ //0 b/c used INPUT_PULLUP
     state1 = 1 - state1;
   }
