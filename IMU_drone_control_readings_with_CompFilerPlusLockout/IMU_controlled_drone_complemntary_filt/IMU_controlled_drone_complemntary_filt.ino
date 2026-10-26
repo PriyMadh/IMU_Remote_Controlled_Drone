@@ -103,7 +103,7 @@ void loop() {
   float linAccelY = (filtered_ay() - gy)/9.81; // Pure Forward/Backward acceleration
   float linAccelZ = (filtered_az() - gz)/9.81; // Pure Up/Down acceleration
 
-//these won't be used to train model, but overirde gestures - the fist is to mkae the drone hover and the second is to make the droen take off and land again
+//these won't be used to train model, but overirde gestures - the fist is to make the drone hover and the second is to make the droen take off and land again
   if (digitalRead(button_steady) == 0){ //0 b/c used INPUT_PULLUP
     state1 = 1 - state1;
     delay(200);
