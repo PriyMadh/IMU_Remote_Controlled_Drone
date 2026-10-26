@@ -20,4 +20,4 @@ Final Product: https://drive.google.com/file/d/1ZVLScwU0HJG88TYm8IoWIs1-Pu88Kdlp
 What I am going to Improve:
 
 
-  I think now that the accelerometer works well with the drone, I am also going to use the gyroscope to control the yaw, which I think would be pretty cool. Also, I might integrate the camera the drone already comes with and maybe see if there is something cool I can do with that; maybe a surveillance drone controlled by my hand movements that can use computer vision to identify a threat (say, a red ball or something)
+  I think now that the accelerometer works well with the drone, I am also going to use the gyroscope on the remote to control the heading of the drone, which I think would be pretty cool. Also, I might integrate the camera the drone already comes with and maybe see if there is something cool I can do with that; maybe a surveillance drone controlled by my hand movements that can use computer vision to identify a threat (say, a red ball or something)
